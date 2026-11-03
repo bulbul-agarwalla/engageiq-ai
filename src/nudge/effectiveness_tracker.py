@@ -219,9 +219,7 @@ class EffectivenessTracker:
         history: List[Dict[str, Any]] = []
         for row in query.all():
             result_type = (
-                "notification"
-                if row.nudge_type == NudgeType.POPUP
-                else row.nudge_type.value
+                "notification" if row.nudge_type == NudgeType.POPUP else row.nudge_type.value
             )
             delta = row.effectiveness_delta or 0.0
             history.append(

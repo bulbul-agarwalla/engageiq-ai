@@ -4,7 +4,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import websocket
-from src.api.routes import auth, courses, export, nudge, preferences, users
+from src.api.routes import (
+    analytics,
+    auth,
+    courses,
+    dashboard,
+    export,
+    nudge,
+    preferences,
+    reports,
+    users,
+)
 from src.config.settings import settings
 
 app = FastAPI(
@@ -29,6 +39,9 @@ app.include_router(courses.router, prefix="/api/v1")
 app.include_router(nudge.router, prefix="/api")
 app.include_router(preferences.router, prefix="/api")
 app.include_router(export.router, prefix="/api")
+app.include_router(reports.router, prefix="/api")
+app.include_router(analytics.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")
 
 
 @app.get("/health")

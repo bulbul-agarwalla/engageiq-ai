@@ -65,9 +65,7 @@ def calculate_iris_ratio(eye_landmarks: np.ndarray, iris_center: np.ndarray) -> 
     return float(np.clip(ratio, 0.0, 1.0))
 
 
-def classify_gaze(
-    pitch: float, yaw: float, iris_ratio: float, ear: float = 1.0
-) -> GazeState:
+def classify_gaze(pitch: float, yaw: float, iris_ratio: float, ear: float = 1.0) -> GazeState:
     """Classify gaze direction from head pose and eye state.
 
     Args:
@@ -85,16 +83,10 @@ def classify_gaze(
     if pitch < settings.gaze_pitch_down_threshold_deg:
         return GazeState.LOOKING_DOWN
 
-    if (
-        yaw < -settings.gaze_yaw_threshold_deg
-        or iris_ratio < settings.gaze_iris_left_threshold
-    ):
+    if yaw < -settings.gaze_yaw_threshold_deg or iris_ratio < settings.gaze_iris_left_threshold:
         return GazeState.AWAY_LEFT
 
-    if (
-        yaw > settings.gaze_yaw_threshold_deg
-        or iris_ratio > settings.gaze_iris_right_threshold
-    ):
+    if yaw > settings.gaze_yaw_threshold_deg or iris_ratio > settings.gaze_iris_right_threshold:
         return GazeState.AWAY_RIGHT
 
     return GazeState.AT_SCREEN
@@ -158,9 +150,7 @@ if __name__ == "__main__":
             x_min, y_min, x_max, y_max = bbox
 
             # Draw color-coded bounding box
-            cv2.rectangle(
-                frame, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color, 2
-            )
+            cv2.rectangle(frame, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color, 2)
 
             # Put state text
             cv2.putText(

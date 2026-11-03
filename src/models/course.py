@@ -20,17 +20,13 @@ class Course(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(150), nullable=False)
-    code: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=False, index=True
-    )
+    code: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     teacher_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relationships
     teacher: Mapped["User"] = relationship(back_populates="courses")

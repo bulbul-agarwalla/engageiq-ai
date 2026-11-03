@@ -47,12 +47,16 @@ def setup_test_db():
 
     with engine.connect() as conn:
         # Terminate any remaining connections to the test database
-        conn.execute(text(f"""
+        conn.execute(
+            text(
+                f"""
             SELECT pg_terminate_backend(pg_stat_activity.pid)
             FROM pg_stat_activity
             WHERE pg_stat_activity.datname = '{TEST_DB_NAME}'
               AND pid <> pg_backend_pid();
-        """))
+        """
+            )
+        )
         conn.execute(text(f"DROP DATABASE IF EXISTS {TEST_DB_NAME}"))
 
 
@@ -117,9 +121,7 @@ class TestSeedData:
         with engine.connect() as conn:
             users_count = conn.execute(text("SELECT count(*) FROM users")).scalar()
             courses_count = conn.execute(text("SELECT count(*) FROM courses")).scalar()
-            sessions_count = conn.execute(
-                text("SELECT count(*) FROM sessions")
-            ).scalar()
+            sessions_count = conn.execute(text("SELECT count(*) FROM sessions")).scalar()
 
             # Acceptance criteria: 2 teachers + 10 students = 12 users
             assert users_count == 12
@@ -131,14 +133,6 @@ class TestSeedData:
 
         # Counts should not change
         with engine.connect() as conn:
-            assert (
-                users_count == conn.execute(text("SELECT count(*) FROM users")).scalar()
-            )
-            assert (
-                courses_count
-                == conn.execute(text("SELECT count(*) FROM courses")).scalar()
-            )
-            assert (
-                sessions_count
-                == conn.execute(text("SELECT count(*) FROM sessions")).scalar()
-            )
+            assert users_count == conn.execute(text("SELECT count(*) FROM users")).scalar()
+            assert courses_count == conn.execute(text("SELECT count(*) FROM courses")).scalar()
+            assert sessions_count == conn.execute(text("SELECT count(*) FROM sessions")).scalar()

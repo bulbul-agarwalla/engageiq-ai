@@ -295,8 +295,7 @@ class CalibrationManager:
         """
         if not self._ear_samples:
             raise ValueError(
-                "No calibration frames collected. "
-                "Call add_frame() before finalise()."
+                "No calibration frames collected. " "Call add_frame() before finalise()."
             )
 
         resting_ear = statistics.mean(self._ear_samples)
@@ -372,9 +371,7 @@ class CalibrationManager:
             roll:  Student's natural head roll (degrees, informational only).
         """
         self.gaze_yaw_min, self.gaze_yaw_max = self._compute_gaze_yaw_window(yaw)
-        self.gaze_pitch_min, self.gaze_pitch_max = self._compute_gaze_pitch_window(
-            pitch
-        )
+        self.gaze_pitch_min, self.gaze_pitch_max = self._compute_gaze_pitch_window(pitch)
 
     # ------------------------------------------------------------------
     # Class-level factory

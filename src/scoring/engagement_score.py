@@ -52,9 +52,7 @@ class EngagementScorer:
             return 0.0
 
         # Calculate total base weight of available signals
-        total_available_weight = sum(
-            self.base_weights[k] for k in available_signals.keys()
-        )
+        total_available_weight = sum(self.base_weights[k] for k in available_signals.keys())
 
         # Handle edge case where all available base weights sum to 0 (shouldn't happen with valid config)
         if total_available_weight <= 0:

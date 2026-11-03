@@ -67,9 +67,7 @@ class TestMapFerEmotions:
             ("neutral", Expression.NEUTRAL),
         ],
     )
-    def test_single_fer_label_maps_correctly(
-        self, fer_label: str, expected: Expression
-    ) -> None:
+    def test_single_fer_label_maps_correctly(self, fer_label: str, expected: Expression) -> None:
         """Each individual FER label must map to the expected Expression."""
         emotions = {label: 0.0 for label in _FER_TO_EXPRESSION}
         emotions[fer_label] = 1.0
@@ -213,6 +211,4 @@ class TestExpressionClassifier:
             clf.classify(crop)
         elapsed_ms = (time.perf_counter() - t0) * 1000 / 20
 
-        assert (
-            elapsed_ms < 50.0
-        ), f"Mean inference {elapsed_ms:.1f}ms exceeds 50ms target"
+        assert elapsed_ms < 50.0, f"Mean inference {elapsed_ms:.1f}ms exceeds 50ms target"

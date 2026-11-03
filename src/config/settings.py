@@ -79,6 +79,10 @@ class Settings(BaseSettings):
     secret_key: str = "change_this_in_production"
     frontend_url: str = "http://localhost:5173"
 
+    # Email (SendGrid)
+    sendgrid_api_key: str = ""
+    email_from: str = "noreply@engageiq.ai"
+
     # Authentication (Google OAuth & JWT)
     google_client_id: str = "mock_client_id"
     google_client_secret: str = "mock_client_secret"

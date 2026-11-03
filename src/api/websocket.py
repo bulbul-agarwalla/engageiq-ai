@@ -23,9 +23,7 @@ class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
 
-    async def connect(
-        self, websocket: WebSocket, session_id: str, token: str | None
-    ) -> bool:
+    async def connect(self, websocket: WebSocket, session_id: str, token: str | None) -> bool:
         """Validate token, accept connection, and track it."""
         if not token:
             await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
@@ -52,9 +50,7 @@ manager = ConnectionManager()
 preprocessor = FramePreprocessor()
 
 
-def _decode_frame(
-    frame_b64: str, width: int = 640, height: int = 480
-) -> np.ndarray | None:
+def _decode_frame(frame_b64: str, width: int = 640, height: int = 480) -> np.ndarray | None:
     """Decode a base64-encoded frame. Supports JPEG/PNG or raw bytes."""
     try:
         frame_bytes = base64.b64decode(frame_b64)
@@ -77,9 +73,7 @@ def _decode_frame(
 
 
 @router.websocket("/ws/session/{session_id}")
-async def websocket_endpoint(
-    websocket: WebSocket, session_id: str, token: str = Query(None)
-):
+async def websocket_endpoint(websocket: WebSocket, session_id: str, token: str = Query(None)):
     """Receive base64-encoded frames, preprocess, and return engagement scores."""
     connected = await manager.connect(websocket, session_id, token)
     if not connected:

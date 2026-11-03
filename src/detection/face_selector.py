@@ -72,9 +72,7 @@ class FaceSelector:
             return bbox[2] * bbox[3]
         return 0.0
 
-    def select(
-        self, faces: List[Any], current_time: Optional[float] = None
-    ) -> Optional[int]:
+    def select(self, faces: List[Any], current_time: Optional[float] = None) -> Optional[int]:
         """Select the primary face from a list of faces.
 
         Args:

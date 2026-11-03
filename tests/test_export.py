@@ -1,7 +1,8 @@
 """Tests for analytics export API endpoints."""
 
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -11,7 +12,9 @@ from sqlalchemy.pool import StaticPool
 from src.api.main import app
 from src.config.settings import EngagementState, UserRole
 from src.database import get_db
-from src.models import Base, Course, EngagementLog, Session as SessionModel, User
+from src.models import Base, Course, EngagementLog
+from src.models import Session as SessionModel
+from src.models import User
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
@@ -38,6 +41,7 @@ def db():
 @pytest.fixture(scope="function")
 def client(db):
     """TestClient with overridden database dependency."""
+
     def override_get_db():
         try:
             yield db

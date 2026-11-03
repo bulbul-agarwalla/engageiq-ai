@@ -16,21 +16,15 @@ class Preferences(Base):
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
-    notification_enabled: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=True
-    )
+    notification_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     overlay_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     audio_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     quiet_hours_start: Mapped[str | None] = mapped_column(String(5), nullable=True)
     quiet_hours_end: Mapped[str | None] = mapped_column(String(5), nullable=True)
-    sensitivity: Mapped[str] = mapped_column(
-        String(10), nullable=False, default="normal"
-    )
+    sensitivity: Mapped[str] = mapped_column(String(10), nullable=False, default="normal")
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relationship back to user (optional)
     user = relationship("User", back_populates="preferences")

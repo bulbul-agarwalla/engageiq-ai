@@ -55,12 +55,8 @@ def test_tracking_persistence():
     # Frame 2: Face 0 moves closer and becomes largest, but Face 1 is still present
     # Keep the landmarks very similar to test embedding matching
     faces_frame2 = [
-        create_mock_face(
-            bbox=[10, 10, 300, 300], person_id=1, noise=0.01
-        ),  # Now largest
-        create_mock_face(
-            bbox=[100, 100, 150, 150], person_id=2, noise=0.01
-        ),  # Original primary
+        create_mock_face(bbox=[10, 10, 300, 300], person_id=1, noise=0.01),  # Now largest
+        create_mock_face(bbox=[100, 100, 150, 150], person_id=2, noise=0.01),  # Original primary
     ]
 
     primary_idx2 = selector.select(faces_frame2)

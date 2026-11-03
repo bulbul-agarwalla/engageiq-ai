@@ -68,9 +68,7 @@ def test_frontal_face_returns_floats():
 def test_head_turned_left_has_negative_yaw():
     """A leftward head turn should produce a negative yaw relative to frontal."""
     frontal = estimate_head_pose(
-        _make_landmarks_from_pose(
-            np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)
-        ),
+        _make_landmarks_from_pose(np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)),
         (480, 640, 3),
     )
     left = estimate_head_pose(
@@ -88,9 +86,7 @@ def test_head_turned_left_has_negative_yaw():
 def test_head_turned_right_has_positive_yaw():
     """A rightward head turn should produce a positive yaw relative to frontal."""
     frontal = estimate_head_pose(
-        _make_landmarks_from_pose(
-            np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)
-        ),
+        _make_landmarks_from_pose(np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)),
         (480, 640, 3),
     )
     right = estimate_head_pose(
@@ -108,9 +104,7 @@ def test_head_turned_right_has_positive_yaw():
 def test_looking_down_has_positive_pitch():
     """A downward head tilt should increase pitch relative to the frontal pose."""
     frontal = estimate_head_pose(
-        _make_landmarks_from_pose(
-            np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)
-        ),
+        _make_landmarks_from_pose(np.zeros(3, dtype=np.float64), np.zeros(3, dtype=np.float64)),
         (480, 640, 3),
     )
     down = estimate_head_pose(
@@ -136,7 +130,5 @@ def test_solvepnp_failure_returns_none():
     """A failed solvePnP call should be handled gracefully."""
     landmarks = np.zeros((468, 3), dtype=np.float32)
 
-    with patch(
-        "src.detection.head_pose.cv2.solvePnP", return_value=(False, None, None)
-    ):
+    with patch("src.detection.head_pose.cv2.solvePnP", return_value=(False, None, None)):
         assert estimate_head_pose(landmarks, (480, 640, 3)) is None

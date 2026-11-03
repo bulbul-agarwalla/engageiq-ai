@@ -132,8 +132,7 @@ class ExpressionClassifier:
             raise ValueError("face_crop must not be None")
         if face_crop.ndim != 3 or face_crop.shape[2] != 3:
             raise ValueError(
-                f"face_crop must be a BGR image with shape (H, W, 3), "
-                f"got {face_crop.shape}"
+                f"face_crop must be a BGR image with shape (H, W, 3), " f"got {face_crop.shape}"
             )
 
         self._load()
@@ -154,9 +153,7 @@ class ExpressionClassifier:
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Expression Classifier Demo — press 'q' to quit."
-    )
+    parser = argparse.ArgumentParser(description="Expression Classifier Demo — press 'q' to quit.")
     parser.add_argument("--demo", action="store_true", help="Run live webcam demo")
     args = parser.parse_args()
 
@@ -212,8 +209,7 @@ if __name__ == "__main__":
                 cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), color, 2)
                 cv2.putText(
                     frame,
-                    f"{result.expression.value} ({result.confidence:.0%})  "
-                    f"{elapsed_ms:.0f}ms",
+                    f"{result.expression.value} ({result.confidence:.0%})  " f"{elapsed_ms:.0f}ms",
                     (x_min, max(20, y_min - 10)),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.7,

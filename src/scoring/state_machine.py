@@ -19,9 +19,7 @@ class EngagementStateMachine:
         self,
         score_ranges: Optional[Dict[str, Tuple[float, float]]] = None,
         duration_thresholds: Optional[Dict[EngagementState, float]] = None,
-        on_transition: Optional[
-            Callable[[EngagementState, EngagementState, float], None]
-        ] = None,
+        on_transition: Optional[Callable[[EngagementState, EngagementState, float], None]] = None,
     ):
         self.score_ranges = score_ranges or {
             "engaged": (70.0, 100.0),

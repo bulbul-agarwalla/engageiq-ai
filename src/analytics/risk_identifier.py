@@ -59,6 +59,4 @@ class RiskIdentifier:
                 if drop_pct > 0.10:
                     declining_trend = True
 
-        return RiskEvaluation(
-            at_risk=at_risk, reason=reason, declining_trend=declining_trend
-        )
+        return RiskEvaluation(at_risk=at_risk, reason=reason, declining_trend=declining_trend)

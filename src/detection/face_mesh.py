@@ -185,20 +185,13 @@ class FaceMeshDetector:
         frame_shape = (frame.shape[1], frame.shape[0])
         self._init_mesh()
         if self._mesh is None or not hasattr(self._mesh, "process"):
-            return FaceMeshResult(
-                faces=[], frame_shape=frame_shape, timestamp=time.time()
-            )
+            return FaceMeshResult(faces=[], frame_shape=frame_shape, timestamp=time.time())
 
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self._mesh.process(rgb_frame)
 
-        if (
-            not hasattr(results, "multi_face_landmarks")
-            or not results.multi_face_landmarks
-        ):
-            return FaceMeshResult(
-                faces=[], frame_shape=frame_shape, timestamp=time.time()
-            )
+        if not hasattr(results, "multi_face_landmarks") or not results.multi_face_landmarks:
+            return FaceMeshResult(faces=[], frame_shape=frame_shape, timestamp=time.time())
 
         faces: list[FaceLandmarks] = []
         for face in results.multi_face_landmarks[: self.max_faces]:
