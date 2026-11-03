@@ -2,6 +2,7 @@
 
 from enum import Enum
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -34,6 +35,32 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = "postgresql://localhost:5432/engageiq_dev"
+
+    @field_validator("database_url")
+    @classmethod
+    def normalize_database_url(cls, v: str) -> str:
+        """Ensure the correct psycopg2 driver is used regardless of how
+        DATABASE_URL was provided.
+
+        Cloud providers (Neon, Render, Heroku) may emit:
+          - ``postgres://``             (legacy Heroku/Render style)
+          - ``postgresql+psycopg://``   (psycopg v3 style, from Neon docs)
+          - ``postgresql://``           (bare scheme; SQLAlchemy default → psycopg2)
+
+        Only ``psycopg2-binary`` is installed, so all variants are normalised
+        to ``postgresql+psycopg2://`` before SQLAlchemy / Alembic see them.
+        Non-PostgreSQL URLs (e.g. ``sqlite://``) are returned unchanged so that
+        the test suite continues to work with its in-memory SQLite database.
+        """
+        if not v:
+            return v
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+psycopg2://", 1)
+        if v.startswith("postgresql+psycopg://"):
+            return v.replace("postgresql+psycopg://", "postgresql+psycopg2://", 1)
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+psycopg2://", 1)
+        return v
 
     # LLM
     llm_provider: str = "groq"
