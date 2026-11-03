@@ -15,21 +15,34 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # ---------------------------------------------------------------------------
 # Fix: pre-mock the broken tensorflow import chain that mediapipe.tasks.python
 # triggers via optional_dependencies.py when tensorflow 2.x is installed in
-# the same environment.  This is needed because:
-#   - mediapipe 0.10.x requires protobuf < 5.0
-#   - tensorflow 2.21+ requires protobuf >= 6.31
-#   - The conda base env has both, causing an ImportError at import time.
-# Mocking only the docs sub-module that mediapipe optionally imports is safe;
-# it does not affect any runtime mediapipe functionality.
+# the same environment.
+# Note: doc_controls functions (do_not_generate_docs, etc.) are decorators!
+# They MUST return the object they decorate (identity lambda), otherwise
+# functions like BaseOptions.to_ctypes() get replaced with Mocks and fail
+# in ctypes.byref().
 # ---------------------------------------------------------------------------
-from unittest.mock import MagicMock  # stdlib — always available
+import types
 
 if "tensorflow" not in sys.modules:
-    _tf_mock = MagicMock()
-    sys.modules["tensorflow"] = _tf_mock
-    sys.modules["tensorflow.tools"] = _tf_mock
-    sys.modules["tensorflow.tools.docs"] = _tf_mock
-    sys.modules["tensorflow.tools.docs.doc_controls"] = _tf_mock
+    doc_controls = types.ModuleType("doc_controls")
+    doc_controls.do_not_generate_docs = lambda obj: obj
+    doc_controls.do_not_doc_in_subclasses = lambda obj: obj
+    doc_controls.doc_private = lambda obj: obj
+    doc_controls.set_deprecated = lambda obj: obj
+
+    tf_tools_docs = types.ModuleType("docs")
+    tf_tools_docs.doc_controls = doc_controls
+
+    tf_tools = types.ModuleType("tools")
+    tf_tools.docs = tf_tools_docs
+
+    tf = types.ModuleType("tensorflow")
+    tf.tools = tf_tools
+
+    sys.modules["tensorflow"] = tf
+    sys.modules["tensorflow.tools"] = tf_tools
+    sys.modules["tensorflow.tools.docs"] = tf_tools_docs
+    sys.modules["tensorflow.tools.docs.doc_controls"] = doc_controls
 
 import cv2
 import mediapipe as mp
