@@ -8,9 +8,7 @@ class TestEngagementScorer:
     def test_all_signals_positive(self) -> None:
         """Score should be > 90 when all signals are high."""
         scorer = EngagementScorer(CourseType.THEORY)
-        score = scorer.compute_score(
-            gaze=100.0, pose=100.0, expression=100.0, alertness=100.0
-        )
+        score = scorer.compute_score(gaze=100.0, pose=100.0, expression=100.0, alertness=100.0)
         assert score == 100.0
         assert score > 90.0
 
@@ -30,9 +28,7 @@ class TestEngagementScorer:
         # Gaze=80, Pose=80, Expression=50, Alertness=80
         # Expected: 80*0.4 + 80*0.2 + 50*0.1 + 80*0.3 = 32 + 16 + 5 + 24 = 77
         # Let's adjust values to hit 50-70 range.
-        score = scorer.compute_score(
-            gaze=60.0, pose=60.0, expression=50.0, alertness=60.0
-        )
+        score = scorer.compute_score(gaze=60.0, pose=60.0, expression=50.0, alertness=60.0)
         # 60*0.4 + 60*0.2 + 50*0.1 + 60*0.3 = 24 + 12 + 5 + 18 = 59
         assert 50.0 <= score <= 70.0
 
@@ -45,15 +41,11 @@ class TestEngagementScorer:
         # Alertness adjusted = 0.3/0.9 = 0.333
         # Pose adjusted = 0.2/0.9 = 0.222
         # Inputs: 100 for all available. Expected: 100
-        score = scorer.compute_score(
-            gaze=100.0, pose=100.0, expression=None, alertness=100.0
-        )
+        score = scorer.compute_score(gaze=100.0, pose=100.0, expression=None, alertness=100.0)
         assert score == 100.0
 
         # Partial inputs
-        score2 = scorer.compute_score(
-            gaze=50.0, pose=50.0, expression=None, alertness=50.0
-        )
+        score2 = scorer.compute_score(gaze=50.0, pose=50.0, expression=None, alertness=50.0)
         assert score2 == 50.0
 
     def test_theory_vs_lab_weights(self) -> None:
@@ -86,9 +78,7 @@ class TestEngagementScorer:
     def test_all_signals_missing(self) -> None:
         """Score should be 0.0 when no signals are provided."""
         scorer = EngagementScorer(CourseType.THEORY)
-        score = scorer.compute_score(
-            gaze=None, pose=None, expression=None, alertness=None
-        )
+        score = scorer.compute_score(gaze=None, pose=None, expression=None, alertness=None)
         assert score == 0.0
 
     def test_partial_missing_with_varying_values(self) -> None:
@@ -97,8 +87,6 @@ class TestEngagementScorer:
         # Seminar base weights: 0.25 for all.
         # If gaze is missing, total available is 0.75.
         # Adjusted weights: 0.25/0.75 = 0.333 for pose, expression, alertness.
-        score = scorer.compute_score(
-            gaze=None, pose=60.0, expression=90.0, alertness=30.0
-        )
+        score = scorer.compute_score(gaze=None, pose=60.0, expression=90.0, alertness=30.0)
         # Expected: (60 + 90 + 30) / 3 = 60.0
         assert score == 60.0

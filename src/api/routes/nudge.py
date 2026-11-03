@@ -13,9 +13,7 @@ router = APIRouter(prefix="/nudge", tags=["nudge"])
 class NudgeRequest(BaseModel):
     """Payload used to trigger a nudge via the API."""
 
-    type: str = Field(
-        ..., description="Delivery channel: notification, overlay, or audio"
-    )
+    type: str = Field(..., description="Delivery channel: notification, overlay, or audio")
     message: Optional[str] = Field(default=None, description="Message to deliver")
     user_id: Optional[int] = Field(default=None, description="Target user identifier")
 

@@ -1,11 +1,7 @@
 import pytest
 
 from src.agents.nudge_agent import check_history, select_nudge_type
-from src.api.schemas.preferences import (
-    PreferencesBase,
-    PreferencesResponse,
-    PreferencesUpdate,
-)
+from src.api.schemas.preferences import PreferencesBase, PreferencesResponse, PreferencesUpdate
 
 
 def test_get_default_preferences():

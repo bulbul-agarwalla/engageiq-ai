@@ -29,9 +29,7 @@ class Session(Base):
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="active")
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relationships
     course: Mapped["Course"] = relationship(back_populates="sessions")

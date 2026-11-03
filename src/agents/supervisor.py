@@ -1,9 +1,7 @@
 """Supervisor agent - orchestrates the engagement monitoring pipeline."""
 
 
-def run_pipeline(
-    mode: str = "student", duration: int = 60, input_source: str = "webcam"
-):
+def run_pipeline(mode: str = "student", duration: int = 60, input_source: str = "webcam"):
     """Run the full engagement monitoring pipeline.
 
     Args:

@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async (authToken) => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/users/me', {
+      const response = await fetch('/api/v1/users/me', {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
@@ -40,20 +40,25 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (credential) => {
-    const response = await fetch('http://localhost:8000/api/v1/auth/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ credential })
-    });
-    
-    if (response.ok) {
-      const data = await response.json();
-      setToken(data.access_token);
-      return true;
+    try {
+      const response = await fetch('/api/v1/auth/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ credential })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setToken(data.access_token);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Login error', err);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
@@ -61,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, setToken }}>
       {children}
     </AuthContext.Provider>
   );

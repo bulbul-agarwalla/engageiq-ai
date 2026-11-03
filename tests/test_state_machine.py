@@ -30,9 +30,7 @@ def test_hysteresis_brief_dip():
     # DISTRACTED has a 15s threshold.
     # Let's test a dip to 35 for 1 second.
     for i in range(75, 90):
-        state = sm.update(
-            score=35.0, is_drowsy=False, is_confused=False, timestamp=i / 15.0
-        )
+        state = sm.update(score=35.0, is_drowsy=False, is_confused=False, timestamp=i / 15.0)
 
     assert state == EngagementState.ENGAGED
     assert sm.current_state == EngagementState.ENGAGED

@@ -4,9 +4,7 @@ from src.nudge.nudge_decision import NudgeDecisionEngine
 
 def test_first_distraction():
     """Test that a sustained distraction triggers a nudge when no history exists."""
-    engine = NudgeDecisionEngine(
-        cooldown_seconds=300, max_nudges=5, trigger_duration=30
-    )
+    engine = NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30)
     decision = engine.should_nudge(
         current_state="distracted",
         state_duration=35.0,
@@ -20,9 +18,7 @@ def test_first_distraction():
 
 def test_cooldown_period():
     """Test that a nudge is blocked if within the cooldown period."""
-    engine = NudgeDecisionEngine(
-        cooldown_seconds=300, max_nudges=5, trigger_duration=30
-    )
+    engine = NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30)
     decision = engine.should_nudge(
         current_state="distracted",
         state_duration=35.0,
@@ -36,9 +32,7 @@ def test_cooldown_period():
 
 def test_max_nudges_reached():
     """Test that nudges are blocked if the session max limit is reached."""
-    engine = NudgeDecisionEngine(
-        cooldown_seconds=300, max_nudges=5, trigger_duration=30
-    )
+    engine = NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30)
     decision = engine.should_nudge(
         current_state="distracted",
         state_duration=35.0,
@@ -52,9 +46,7 @@ def test_max_nudges_reached():
 
 def test_insufficient_duration():
     """Test that brief distractions do not trigger a nudge."""
-    engine = NudgeDecisionEngine(
-        cooldown_seconds=300, max_nudges=5, trigger_duration=30
-    )
+    engine = NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30)
     decision = engine.should_nudge(
         current_state="distracted",
         state_duration=15.0,  # Less than 30s
@@ -67,9 +59,7 @@ def test_insufficient_duration():
 
 def test_escalation_logic():
     """Test that an ineffective POPUP escalates to AUDIO."""
-    engine = NudgeDecisionEngine(
-        cooldown_seconds=300, max_nudges=5, trigger_duration=30
-    )
+    engine = NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30)
     history = [{"nudge_type": "POPUP", "was_effective": False}]
 
     decision = engine.should_nudge(
@@ -94,9 +84,7 @@ def test_langgraph_agent_equivalent():
         "last_nudge_time": 400.0,
         "session_nudge_count": 1,
         "effectiveness_history": [{"nudge_type": "POPUP", "was_effective": False}],
-        "engine": NudgeDecisionEngine(
-            cooldown_seconds=300, max_nudges=5, trigger_duration=30
-        ),
+        "engine": NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30),
     }
 
     result = agent.invoke(state_input)
@@ -112,9 +100,7 @@ def test_langgraph_agent_equivalent():
         "last_nudge_time": 100.0,  # Blocks
         "session_nudge_count": 1,
         "effectiveness_history": [],
-        "engine": NudgeDecisionEngine(
-            cooldown_seconds=300, max_nudges=5, trigger_duration=30
-        ),
+        "engine": NudgeDecisionEngine(cooldown_seconds=300, max_nudges=5, trigger_duration=30),
     }
 
     result_cooldown = agent.invoke(state_input_cooldown)

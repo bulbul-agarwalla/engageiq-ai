@@ -1,9 +1,9 @@
 """Analytics export routes for sessions and courses."""
 
 import csv
-from datetime import datetime
 import io
 import json
+from datetime import datetime
 from typing import Generator, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -50,15 +50,17 @@ def stream_csv(query) -> Generator[str, None, None]:
     output = io.StringIO()
     writer = csv.writer(output)
 
-    writer.writerow([
-        "timestamp",
-        "anonymized_student_id",
-        "engagement_score",
-        "state",
-        "gaze_state",
-        "drowsiness",
-        "expression",
-    ])
+    writer.writerow(
+        [
+            "timestamp",
+            "anonymized_student_id",
+            "engagement_score",
+            "state",
+            "gaze_state",
+            "drowsiness",
+            "expression",
+        ]
+    )
     yield output.getvalue()
     output.seek(0)
     output.truncate(0)
@@ -66,15 +68,17 @@ def stream_csv(query) -> Generator[str, None, None]:
     for log in query.yield_per(500):
         state_val = log.state.value if hasattr(log.state, "value") else str(log.state)
         anon_id = anonymize_id(log.user_id)
-        writer.writerow([
-            log.timestamp.isoformat() if log.timestamp else "",
-            anon_id,
-            log.score,
-            state_val,
-            log.gaze or "",
-            log.drowsiness if log.drowsiness is not None else "",
-            log.expression or "",
-        ])
+        writer.writerow(
+            [
+                log.timestamp.isoformat() if log.timestamp else "",
+                anon_id,
+                log.score,
+                state_val,
+                log.gaze or "",
+                log.drowsiness if log.drowsiness is not None else "",
+                log.expression or "",
+            ]
+        )
         yield output.getvalue()
         output.seek(0)
         output.truncate(0)

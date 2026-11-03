@@ -4,10 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.api.middleware.auth import get_current_user, require_role
-from src.api.schemas.course import (
-    CourseCreate,
-    CourseResponse,
-)
+from src.api.schemas.course import CourseCreate, CourseResponse
 from src.database import get_db
 from src.models.course import Course
 from src.models.user import User
@@ -34,9 +31,7 @@ def create_course(
 
 
 @router.get("/", response_model=list[CourseResponse])
-def list_courses(
-    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
-):
+def list_courses(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """List courses relevant to the user."""
     if current_user.role == "teacher":
         return current_user.courses

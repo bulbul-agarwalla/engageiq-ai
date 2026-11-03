@@ -91,9 +91,7 @@ def test_confidence_range():
 def test_multiple_faces():
     """The detector should honor the configured maximum number of faces."""
     detector = FaceMeshDetector(max_faces=3)
-    fake_faces = [
-        [SimpleNamespace(x=0.0, y=0.0, z=0.0) for _ in range(468)] for _ in range(3)
-    ]
+    fake_faces = [[SimpleNamespace(x=0.0, y=0.0, z=0.0) for _ in range(468)] for _ in range(3)]
     fake_results = SimpleNamespace(multi_face_landmarks=fake_faces)
     detector._mesh = _FakeFaceMesh(fake_results)
 

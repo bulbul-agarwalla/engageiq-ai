@@ -221,9 +221,7 @@ class TestFullCalibration:
         resting = 0.22
         cm = make_manager(n_frames=450, ear=resting)
         data = cm.finalise()
-        assert data.ear_threshold == pytest.approx(
-            resting * EAR_DROWSINESS_RATIO, abs=1e-4
-        )
+        assert data.ear_threshold == pytest.approx(resting * EAR_DROWSINESS_RATIO, abs=1e-4)
 
     def test_is_default_false_after_calibration(self):
         cm = make_manager(n_frames=10)
@@ -361,23 +359,17 @@ class TestProgress:
         assert cm.progress() == pytest.approx(0.0)
 
     def test_progress_one_at_full_collection(self):
-        target = int(
-            CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS
-        )
+        target = int(CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS)
         cm = make_manager(n_frames=target)
         assert cm.progress() == pytest.approx(1.0)
 
     def test_progress_caps_at_one(self):
-        target = int(
-            CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS
-        )
+        target = int(CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS)
         cm = make_manager(n_frames=target * 2)
         assert cm.progress() == pytest.approx(1.0)
 
     def test_progress_midpoint(self):
-        target = int(
-            CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS
-        )
+        target = int(CalibrationManager.TARGET_DURATION_SECONDS * CalibrationManager.DEFAULT_FPS)
         cm = make_manager(n_frames=target // 2)
         assert cm.progress() == pytest.approx(0.5, abs=0.02)
 
@@ -475,13 +467,9 @@ class TestAPIPost:
         assert resp.status_code == 201
 
     def test_post_returns_correct_ear_threshold(self):
-        resp = client.post(
-            "/api/v1/calibrate/2", json={"frames": self._make_frames(ear=0.22)}
-        )
+        resp = client.post("/api/v1/calibrate/2", json={"frames": self._make_frames(ear=0.22)})
         data = resp.json()
-        assert data["ear_threshold"] == pytest.approx(
-            0.22 * EAR_DROWSINESS_RATIO, abs=1e-3
-        )
+        assert data["ear_threshold"] == pytest.approx(0.22 * EAR_DROWSINESS_RATIO, abs=1e-3)
 
     def test_post_stores_data(self):
         client.post("/api/v1/calibrate/3", json={"frames": self._make_frames()})
@@ -494,9 +482,7 @@ class TestAPIPost:
         assert resp.json()["is_default"] is False
 
     def test_post_frames_collected_matches(self):
-        resp = client.post(
-            "/api/v1/calibrate/5", json={"frames": self._make_frames(n=200)}
-        )
+        resp = client.post("/api/v1/calibrate/5", json={"frames": self._make_frames(n=200)})
         assert resp.json()["frames_collected"] == 200
 
 

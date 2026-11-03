@@ -50,9 +50,7 @@ class YawnDetector:
             mar_threshold if mar_threshold is not None else settings.yawn_mar_threshold
         )
         self.yawn_duration = (
-            yawn_duration
-            if yawn_duration is not None
-            else settings.yawn_duration_seconds
+            yawn_duration if yawn_duration is not None else settings.yawn_duration_seconds
         )
         self.yawn_start_time = None
         self.is_yawning = False
@@ -133,9 +131,7 @@ if __name__ == "__main__":
 
             color = (0, 0, 255) if is_yawning else (0, 255, 0)
 
-            cv2.rectangle(
-                frame, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color, 2
-            )
+            cv2.rectangle(frame, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color, 2)
             cv2.putText(
                 frame,
                 f"MAR: {mar:.2f}",

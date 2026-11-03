@@ -25,14 +25,10 @@ class EngagementLog(Base):
     session_id: Mapped[int] = mapped_column(
         ForeignKey("sessions.id", ondelete="CASCADE"), nullable=False
     )
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     score: Mapped[float] = mapped_column(Float, nullable=False)
-    state: Mapped[EngagementState] = mapped_column(
-        SQLEnum(EngagementState), nullable=False
-    )
+    state: Mapped[EngagementState] = mapped_column(SQLEnum(EngagementState), nullable=False)
 
     # Core CV signals
     gaze: Mapped[str | None] = mapped_column(String(100), nullable=True)
@@ -40,18 +36,14 @@ class EngagementLog(Base):
     expression: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
     # Relationships
     session: Mapped["Session"] = relationship(back_populates="engagement_logs")
     user: Mapped["User"] = relationship(back_populates="engagement_logs")
 
     # Table arguments for composite index
-    __table_args__ = (
-        Index("ix_engagement_logs_session_user", "session_id", "user_id"),
-    )
+    __table_args__ = (Index("ix_engagement_logs_session_user", "session_id", "user_id"),)
 
     def __repr__(self) -> str:
         return (

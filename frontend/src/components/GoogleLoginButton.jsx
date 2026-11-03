@@ -31,3 +31,5 @@ export const GoogleLoginButton = () => {
     </div>
   );
 };
+
+export default GoogleLoginButton;

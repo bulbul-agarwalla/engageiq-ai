@@ -1,168 +1,175 @@
-# EngageIQ AI
+# EngageIQ AI — Intelligent Classroom Telemetry & Pedagogical Agent Platform
 
-Agentic classroom engagement monitoring system that uses webcam-based computer vision to track student attention during online and hybrid lectures.
+[![CI](https://github.com/bulbul-agarwalla/engageiq-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/bulbul-agarwalla/engageiq-ai/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-248%20passed-success)](https://github.com/bulbul-agarwalla/engageiq-ai)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.12-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/frontend-React%2018%20%2B%20Vite-61dafb)](https://react.dev/)
+[![LangGraph](https://img.shields.io/badge/agents-LangGraph%20%2B%20Groq%20LLaMA--3.3-orange)](https://www.langchain.com/)
 
-Built by a 5-student pod at Newton School of Technology (NST) as part of the Summer Profile Building Drive 2026.
-
----
-
-## What It Does
-
-EngageIQ AI watches your webcam during a lecture and tells you (and optionally your teacher) how engaged you are. It detects drowsiness, distraction, confusion, and phone usage in real-time using computer vision -- then an AI agent scores your engagement, nudges you when you drift off, and generates actionable analytics.
-
-**For Students:** Personal engagement timeline, focus streaks, self-improvement tips, smart nudges.
-**For Teachers:** Class-level analytics, engagement heatmaps, at-risk student flags, pedagogical suggestions.
-
-**Privacy first:** All CV processing happens on your device. No video is stored or transmitted. Teachers only see anonymized aggregate scores. You can opt out at any time.
+**EngageIQ AI** is an intelligent, privacy-preserving classroom engagement monitoring and pedagogical intervention platform. It bridges the gap in remote, hybrid, and modern classrooms by analyzing webcam computer vision telemetry in real time, calculating multi-signal engagement scores, personalizing intelligent student nudges, and synthesizing AI-driven teaching recommendations for educators.
 
 ---
 
-## Key Features
+## Architecture
 
-- Real-time face detection with 468 facial landmarks (MediaPipe Face Mesh)
-- Head pose estimation (pitch, yaw, roll) for gaze tracking
-- Drowsiness detection via Eye Aspect Ratio (EAR) with blink filtering
-- Yawn detection via Mouth Aspect Ratio (MAR)
-- Facial expression classification (engaged, confused, bored, neutral)
-- Phone/object detection (YOLOv8 nano)
-- Multi-signal engagement scoring with configurable weights
-- Engagement state machine (Engaged / Passive / Distracted / Drowsy / Confused)
-- Smart nudge agent with cooldown and effectiveness tracking
-- LLM-powered intervention suggestions for teachers
-- Session and weekly engagement reports
-- Student dashboard and teacher dashboard (React + Tailwind)
+```
+                                  [ Webcam Input ]
+                                         │
+                   ┌─────────────────────┴─────────────────────┐
+                   ▼                                           ▼
+      [ MediaPipe 468 Landmarks ]                     [ YOLOv8n Object Detection ]
+     (Head Pose, Gaze, EAR, MAR)                       (Phone / Distraction Events)
+                   │                                           │
+                   └─────────────────────┬─────────────────────┘
+                                         ▼
+                          [ Multi-Signal Engagement Scorer ]
+                                         │
+             ┌───────────────────────────┴───────────────────────────┐
+             ▼                                                       ▼
+   [ LangGraph Nudge Agent ]                              [ WebSocket Live Stream ]
+  (Cooldown, Thresholding, &                              (Real-time State Telemetry)
+    Effectiveness Tracking)                                          │
+                                                                     ▼
+                                                         [ PostgreSQL Database ]
+                                                                     │
+                         ┌───────────────────────────────────────────┴───────────────────────────────────────────┐
+                         ▼                                                                                       ▼
+            [ Instructor Analytics & Reports ]                                                      [ Student Focus Portal ]
+   • Session HTML reports with Chart.js                                                    • Focus streaks & trends
+   • Weekly trend regressions & anomaly detection                                          • Nudge sensitivity settings
+   • Difficulty Correlator (dips vs timestamps)                                            • Anonymized privacy mode
+   • Groq LLaMA-3.3 Pedagogical Intervention Agent
+   • Data Portability Exports (CSV / JSON)
+```
+
+---
+
+## Key Capabilities
+
+1. **Edge Computer Vision & Telemetry**:
+   - 468-point facial mesh mapping (pitch, yaw, roll head-pose orientation).
+   - Gaze classification via iris coordinate ratios and head angle thresholds.
+   - Fatigue and yawn tracking via Eye Aspect Ratio (EAR) and Mouth Aspect Ratio (MAR).
+   - Emotional valence / expression state classification (Engaged, Confused, Bored, Neutral).
+2. **Agentic Intervention Engine (LangGraph & Groq LLaMA-3.3)**:
+   - Evaluates sustained drops, fatigue trends, and student sensitivity settings.
+   - Recommends dynamic pedagogical interventions (e.g. interactive polls, stretch breaks, concept reviews) with confidence scores.
+   - Graceful offline fallback: continues providing rule-based recommendations even without LLM credentials.
+3. **Strict Privacy by Design**:
+   - Real student identifiers are never stored in reports or export payloads; student IDs are deterministically hashed via SHA-256 (`anon_<hash[:8]>`).
+   - Local-only processing modes for students.
+4. **Data Portability & NAAC Accreditation Compliance**:
+   - Streamed exports in both CSV and JSON formats with date-range and session filters.
+5. **Modern Responsive React Dashboard**:
+   - Single-page application built with React 18, Vite, React Router v6, and Recharts.
+   - Dedicated views for Students, Teachers, Course Deep Dives, and Printable Lecture Reports.
 
 ---
 
 ## Tech Stack
 
-| What | Tool |
-|------|------|
-| Agent orchestration | LangGraph |
-| Face detection | MediaPipe Face Mesh (468 landmarks) |
-| Head pose | OpenCV solvePnP |
-| Expression classifier | FER library or custom CNN |
-| Object detection | YOLOv8n (Ultralytics) |
-| LLM | Groq (default, free), Gemini, Ollama |
-| Backend | FastAPI |
-| Frontend | React + Tailwind CSS |
-| Database | PostgreSQL + Alembic |
-| Real-time | WebSocket |
-| Deployment | Docker + Railway or Render |
+| Domain | Technologies |
+|---|---|
+| **Backend & WebSockets** | FastAPI, Uvicorn, WebSockets, Pydantic v2, Python 3.10/3.12 |
+| **Agent Orchestration & LLM** | LangGraph, LangChain, Groq API (LLaMA-3.3-70B), Google Gemini |
+| **Computer Vision** | MediaPipe, OpenCV, Ultralytics YOLOv8, NumPy, SciPy |
+| **Frontend** | React 18, Vite, React Router DOM, Recharts |
+| **Database & ORM** | PostgreSQL 16, SQLAlchemy 2.0, Alembic migrations |
+| **Reports & Export** | Jinja2, Chart.js, SendGrid API |
+| **Testing & CI/CD** | Pytest, Flake8, Black, Isort, GitHub Actions, Docker |
 
 ---
 
-## Quick Start
+## Getting Started
 
-### Prerequisites
-
+### 1. Prerequisites
 - Python 3.10+
-- PostgreSQL 14+
-- Node.js 18+ (for frontend)
-- Webcam (laptop built-in or USB)
+- Node.js 18+
+- PostgreSQL (or local SQLite for dev/testing)
 
-### Setup
-
+### 2. Backend Setup
 ```bash
-# Clone
-git clone https://github.com/newton-school-ai/engageiq-ai.git
+# Clone the repository
+git clone https://github.com/bulbul-agarwalla/engageiq-ai.git
 cd engageiq-ai
 
-# Python environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Environment variables
+# Configure environment variables
 cp .env.example .env
-# Edit .env with your Groq API key (free at console.groq.com)
 
-# Database
-createdb engageiq_dev
+# Run database migrations
 alembic upgrade head
 
-# Run backend
+# Start FastAPI server
 uvicorn src.api.main:app --reload --port 8000
+```
+API Documentation will be live at `http://localhost:8000/docs`.
 
-# Run frontend (separate terminal)
+### 3. Frontend Setup
+```bash
 cd frontend
 npm install
 npm run dev
 ```
+Open `http://localhost:5173` in your browser.
 
-### Test with your webcam
-
+### 4. Running with Docker Compose
 ```bash
-# Quick test - point webcam at yourself
-python -m src.detection.face_mesh --demo
-
-# Full session test - watch any lecture video with webcam on
-python -m src.agents.supervisor --mode student --duration 30
+docker compose up -d --build
 ```
 
 ---
 
-## Project Structure
+## API Summary
 
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/auth/token` | Exchange OAuth or demo credentials for JWT token |
+| `GET` | `/api/dashboard/student` | Student focus streak, engagement trends, and session history |
+| `GET` | `/api/dashboard/teacher` | Class average, at-risk count, and course summaries |
+| `GET` | `/api/dashboard/teacher/courses/{id}/overview` | Course breakdown with anonymized at-risk student flags |
+| `GET` | `/api/reports/sessions/{id}` | Self-contained, printable HTML session report |
+| `GET` | `/api/reports/sessions/{id}/data` | Structured JSON report telemetry |
+| `GET` | `/api/reports/sessions/{id}/interventions` | AI pedagogical intervention recommendations |
+| `GET` | `/api/reports/courses/{id}/weekly` | Weekly trend analysis and anomaly detection |
+| `GET` | `/api/analytics/courses/{id}/difficulty` | Pinpoint difficult lecture topics via engagement dips |
+| `POST` | `/api/reports/sessions/{id}/email` | Send report via SendGrid |
+| `GET` | `/api/export/sessions/{id}` | Export session telemetry (CSV / JSON) |
+| `GET` | `/api/export/courses/{id}` | Export course telemetry with date range filtering |
+| `WS` | `/ws/engagement/{session_id}` | Real-time WebSocket engagement feed |
+
+---
+
+## Testing & Quality Assurance
+
+The codebase includes an extensive automated test suite covering all CV pipelines, agent state machines, reporting engines, authentication, and API endpoints:
+
+```bash
+# Run all tests
+pytest tests/ -v
+
+# Run with test coverage
+pytest tests/ --cov=src --cov-report=term-missing
 ```
-src/
-  agents/         Supervisor, engagement scorer, nudge agent, intervention agent
-  detection/      Face mesh, head pose, gaze, drowsiness, yawn, expression, object detection
-  ingestion/      Webcam capture, frame extraction, stream handling
-  scoring/        Engagement score, state machine, temporal filtering
-  nudge/          Nudge decisions, delivery, effectiveness tracking
-  analytics/      Class aggregation, risk identification, trend analysis
-  reports/        Session reports, weekly reports, intervention suggestions
-  api/            FastAPI routes
-  models/         SQLAlchemy database models
-  templates/      Jinja2 email/report templates
-  utils/          Image, landmark, math, time utilities
-  config/         Settings, enums, thresholds
-```
+
+**Status**: 248 passed, 0 failed.
 
 ---
 
 ## Documentation
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Branch strategy, PR workflow, coding standards
-- [DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md) - Full setup guide, daily workflow, testing
-- [MILESTONES.md](MILESTONES.md) - M1-M8 with acceptance criteria and defense questions
-- [ISSUES_TRACKER.md](ISSUES_TRACKER.md) - All 26 issues with full descriptions
-- [POD_GUIDE.md](POD_GUIDE.md) - Pod roles, sprint timeline, Q&A schedule
-
----
-
-## Pod
-
-| Role | Owns |
-|------|------|
-| Maintainer | Repo arch, supervisor agent, config, M1+M8 |
-| Contributor 1 | M2 - Face Detection + Head Pose + Gaze |
-| Contributor 2 | M3+M4 - Drowsiness/Expression + Engagement Scoring |
-| Contributor 3 | M5 - Nudge Agent + Delivery System |
-| Contributor 4 | M6+M7 - Teacher Analytics + Report Generator |
-
----
-
-## Milestones
-
-| # | Name | Status |
-|---|------|--------|
-| M1 | Project Scaffold and Webcam Pipeline | Todo |
-| M2 | Face Detection and Gaze Estimation | Todo |
-| M3 | Drowsiness and Expression Detection | Todo |
-| M4 | Engagement Scoring Agent | Todo |
-| M5 | Nudge Agent and Delivery System | Todo |
-| M6 | Teacher Analytics and Insights | Todo |
-| M7 | Report Generator and Intervention Agent | Todo |
-| M8 | Dashboard, Integration and Demo | Todo |
+- [Deployment Guide (Railway, Render, Vercel, Docker)](docs/deployment_guide.md)
+- [Demonstration & Recruiter Script](docs/demo_script.md)
 
 ---
 
 ## License
 
-MIT
-
----
-
-NST Engineering - EngageIQ AI | Summer Profile Building Drive 2026
+MIT License. Designed and maintained by [Bulbul Agarwalla](https://github.com/bulbul-agarwalla).
