@@ -1,22 +1,23 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Download, AlertCircle } from 'lucide-react';
 
 export default function ExportButton({
-  type = "session", // "session" or "course"
+  type = 'session', // "session" or "course"
   id,
-  startDate = "",
-  endDate = "",
-  studentId = "",
-  baseUrl = "/api/export",
-  className = "",
+  startDate = '',
+  endDate = '',
+  studentId = '',
+  baseUrl = '/api/export',
+  className = '',
   style = {},
 }) {
-  const [format, setFormat] = useState("csv");
+  const [format, setFormat] = useState('csv');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleExport = async () => {
     if (!id) {
-      setError("ID is required for export.");
+      setError('Please provide a valid Session ID or Course ID to export.');
       return;
     }
 
@@ -24,20 +25,20 @@ export default function ExportButton({
     setError(null);
 
     try {
-      const endpointType = type === "course" ? "courses" : "sessions";
+      const endpointType = type === 'course' ? 'courses' : 'sessions';
       const queryParams = new URLSearchParams();
-      queryParams.append("format", format);
+      queryParams.append('format', format);
 
-      if (startDate) queryParams.append("start", startDate);
-      if (endDate) queryParams.append("end", endDate);
-      if (studentId) queryParams.append("student_id", studentId);
+      if (startDate) queryParams.append('start', startDate);
+      if (endDate) queryParams.append('end', endDate);
+      if (studentId) queryParams.append('student_id', studentId);
 
       const url = `${baseUrl}/${endpointType}/${id}?${queryParams.toString()}`;
 
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       const headers = {};
       if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+        headers['Authorization'] = `Bearer ${token}`;
       }
 
       const response = await fetch(url, { headers });
@@ -48,22 +49,22 @@ export default function ExportButton({
           const errData = await response.json();
           if (errData.detail) {
             errMessage =
-              typeof errData.detail === "string"
+              typeof errData.detail === 'string'
                 ? errData.detail
                 : JSON.stringify(errData.detail);
           }
         } catch (_) {
-          // Response was not JSON
+          // not json
         }
         throw new Error(errMessage);
       }
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = downloadUrl;
 
-      const contentDisposition = response.headers.get("Content-Disposition");
+      const contentDisposition = response.headers.get('Content-Disposition');
       let filename = `${type}_${id}_export.${format}`;
       if (contentDisposition) {
         const match = contentDisposition.match(/filename=["']?([^"';]+)["']?/);
@@ -78,7 +79,7 @@ export default function ExportButton({
       a.remove();
       window.URL.revokeObjectURL(downloadUrl);
     } catch (err) {
-      setError(err.message || "An error occurred during export.");
+      setError(err.message || 'An error occurred during export.');
     } finally {
       setLoading(false);
     }
@@ -88,59 +89,52 @@ export default function ExportButton({
     <div
       className={`export-button-container ${className}`}
       style={{
-        display: "inline-flex",
-        flexDirection: "column",
-        gap: "4px",
+        display: 'inline-flex',
+        flexDirection: 'column',
+        gap: '6px',
         ...style,
       }}
     >
-      <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
         <select
           value={format}
           onChange={(e) => setFormat(e.target.value)}
           disabled={loading}
           aria-label="Export format"
           style={{
-            padding: "6px 10px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-            fontSize: "14px",
-            backgroundColor: "#fff",
-            cursor: loading ? "not-allowed" : "pointer",
+            padding: '8px 12px',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '13.5px',
+            cursor: loading ? 'not-allowed' : 'pointer',
           }}
         >
-          <option value="csv">CSV</option>
-          <option value="json">JSON</option>
+          <option value="csv">CSV (Spreadsheet)</option>
+          <option value="json">JSON (Raw Telemetry)</option>
         </select>
 
         <button
           onClick={handleExport}
           disabled={loading || !id}
-          style={{
-            padding: "6px 14px",
-            borderRadius: "4px",
-            border: "none",
-            backgroundColor: loading ? "#9ca3af" : "#2563eb",
-            color: "#ffffff",
-            fontSize: "14px",
-            fontWeight: "500",
-            cursor: loading || !id ? "not-allowed" : "pointer",
-            transition: "background-color 0.2s",
-          }}
+          className="btn btn-primary"
+          style={{ padding: '8px 16px', fontSize: '13.5px' }}
         >
-          {loading ? "Exporting..." : `Export ${format.toUpperCase()}`}
+          <Download size={15} />
+          {loading ? 'Exporting...' : `Download ${format.toUpperCase()}`}
         </button>
       </div>
 
       {error && (
         <span
           style={{
-            color: "#dc2626",
-            fontSize: "12px",
-            marginTop: "2px",
+            color: '#FDA4AF',
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            marginTop: '4px',
           }}
         >
-          {error}
+          <AlertCircle size={14} /> {error}
         </span>
       )}
     </div>

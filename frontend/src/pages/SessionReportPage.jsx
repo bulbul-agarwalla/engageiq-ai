@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import {
+  FileText,
+  Mail,
+  Printer,
+  Sparkles,
+  ArrowLeft,
+  Activity,
+  Layers,
+  Clock,
+  Users,
+  CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+} from 'lucide-react';
 import MetricCard from '../components/MetricCard';
 import EngagementChart from '../components/EngagementChart';
 import StateDistributionChart from '../components/StateDistributionChart';
@@ -69,12 +83,17 @@ export default function SessionReportPage() {
   };
 
   if (loading) {
-    return <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Analyzing session engagement...</div>;
+    return (
+      <div style={{ padding: '60px', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <div className="live-pulse-dot" style={{ margin: '0 auto 12px auto' }} />
+        Analyzing session engagement telemetry...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="card" style={{ color: '#b91c1c', backgroundColor: '#fee2e2' }}>
+      <div className="card" style={{ color: '#FDA4AF', backgroundColor: 'rgba(244, 63, 94, 0.1)', borderColor: 'rgba(244, 63, 94, 0.3)' }}>
         {error}
       </div>
     );
@@ -87,26 +106,49 @@ export default function SessionReportPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Header */}
+      <div
+        style={{
+          marginBottom: '28px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Link to="/reports" style={{ color: '#2563eb', textDecoration: 'none', fontSize: '13px' }}>
-              &larr; Back to Sessions
-            </Link>
-          </div>
-          <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a', marginTop: '4px' }}>
+          <Link
+            to="/reports"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: '#818CF8',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+            }}
+          >
+            <ArrowLeft size={14} /> Back to Session Directory
+          </Link>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#FFFFFF', marginTop: '6px', letterSpacing: '-0.02em' }}>
             Lecture Report — Session #{data.session.id}
           </h1>
-          <p style={{ color: '#64748b', fontSize: '14px' }}>
-            {data.session.course_name} ({data.session.course_code}) · {data.session.start_time}
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+            <span className="badge badge-info">{data.session.course_code}</span>
+            <span style={{ fontSize: '13.5px', color: 'var(--text-secondary)' }}>
+              {data.session.course_name} · {data.session.start_time}
+            </span>
+          </div>
         </div>
+
         <div style={{ display: 'flex', gap: '10px' }}>
           <button
             onClick={() => setViewIframe(!viewIframe)}
             className="btn btn-secondary"
           >
-            {viewIframe ? 'View Dashboard View' : 'View Printable HTML'}
+            <Printer size={15} /> {viewIframe ? 'Interactive Dashboard View' : 'Printable HTML Document'}
           </button>
         </div>
       </div>
@@ -121,12 +163,13 @@ export default function SessionReportPage() {
         </div>
       ) : (
         <>
+          {/* Top Summary Metrics */}
           <div className="metrics-grid">
             <MetricCard
-              title="Class Engagement"
+              title="Class Engagement Average"
               value={formatScore(data.class_average)}
-              subtitle="Average across all students"
-              badgeText={data.class_average >= 70 ? 'High' : 'Low'}
+              subtitle="Mean focus over duration"
+              badgeText={data.class_average >= 70 ? 'High' : 'Low Attention'}
               badgeType={data.class_average >= 70 ? 'success' : 'danger'}
             />
             <MetricCard
@@ -135,123 +178,155 @@ export default function SessionReportPage() {
               subtitle="Distinct participants"
             />
             <MetricCard
-              title="Telemetry Logs"
+              title="Telemetry Observations"
               value={data.session.log_count}
-              subtitle="Frames analyzed"
+              subtitle="In-flight frames analyzed"
             />
             <MetricCard
               title="Duration"
               value={`${data.session.duration_minutes} min`}
-              subtitle="Recorded elapsed time"
+              subtitle="Recorded lecture length"
             />
           </div>
 
-          {/* AI Pedagogical Interventions Section */}
-          <div className="card" style={{ borderLeft: '4px solid #2563eb' }}>
+          {/* AI Pedagogical Intervention Agent */}
+          <div className="card" style={{ borderLeft: '4px solid #6366F1' }}>
             <div className="card-header">
               <div>
-                <h2 className="card-title">AI Pedagogical Intervention Agent</h2>
-                <p style={{ color: '#64748b', fontSize: '13px' }}>
-                  Targeted recommendations based on live attention patterns and fatigue indicators.
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {interventions.map((item, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    backgroundColor: '#f8fafc',
-                    padding: '16px',
-                    borderRadius: '8px',
-                    border: '1px solid #e2e8f0',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span className="badge badge-info" style={{ textTransform: 'uppercase' }}>
-                        {item.type}
-                      </span>
-                      <span
-                        className={`badge ${
-                          item.priority === 'high' ? 'badge-danger' : item.priority === 'medium' ? 'badge-warning' : 'badge-info'
-                        }`}
-                      >
-                        {item.priority} priority
-                      </span>
-                    </div>
-                    <div style={{ color: '#1e293b', fontSize: '14px', fontWeight: '500' }}>
-                      {item.message}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right', minWidth: '80px' }}>
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>Confidence</div>
-                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#0f172a' }}>
-                      {(item.confidence * 100).toFixed(0)}%
-                    </div>
-                  </div>
+                <h2 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Sparkles size={19} color="#818CF8" /> AI Pedagogical Intervention Agent
+                </h2>
+                <div className="card-subtitle">
+                  Synthesized recommendations based on physiological attention dips and fatigue indicators.
                 </div>
-              ))}
+              </div>
+              <span className="badge badge-info">LLaMA-3.3 + Heuristic Engine</span>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {interventions.length === 0 ? (
+                <div style={{ color: 'var(--text-muted)', fontSize: '13.5px', padding: '12px' }}>
+                  No interventions required — class demonstrated high focus consistency throughout the session.
+                </div>
+              ) : (
+                interventions.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                      padding: '16px 20px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ maxWidth: '80%' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <span className="badge badge-cyan" style={{ textTransform: 'uppercase' }}>
+                          {item.type}
+                        </span>
+                        <span
+                          className={`badge ${
+                            item.priority === 'high'
+                              ? 'badge-danger'
+                              : item.priority === 'medium'
+                              ? 'badge-warning'
+                              : 'badge-info'
+                          }`}
+                        >
+                          {item.priority} priority
+                        </span>
+                      </div>
+                      <div style={{ color: '#FFFFFF', fontSize: '14px', fontWeight: 500, lineHeight: 1.5 }}>
+                        {item.message}
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: 'right', minWidth: '90px' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Confidence</div>
+                      <div style={{ fontSize: '18px', fontWeight: 800, color: '#A5B4FC' }}>
+                        {(item.confidence * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+          {/* Timeline and State Distribution */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px', marginBottom: '24px' }}>
             <div className="card" style={{ margin: 0 }}>
               <div className="card-header">
-                <h2 className="card-title">Engagement Timeline</h2>
+                <div>
+                  <h2 className="card-title">
+                    <Activity size={18} color="#818CF8" /> 40-Minute Engagement Timeline
+                  </h2>
+                  <div className="card-subtitle">Continuous moving average across the lecture.</div>
+                </div>
               </div>
               <EngagementChart data={timelineChartData} dataKey="average" xKey="date" />
             </div>
 
             <div className="card" style={{ margin: 0 }}>
               <div className="card-header">
-                <h2 className="card-title">Engagement States</h2>
+                <div>
+                  <h2 className="card-title">
+                    <Layers size={18} color="#06B6D4" /> Attention State Distribution
+                  </h2>
+                  <div className="card-subtitle">Engaged vs Passive vs Drowsy proportions.</div>
+                </div>
               </div>
               <StateDistributionChart data={data.state_distribution} />
             </div>
           </div>
 
-          {/* Email Delivery Section */}
+          {/* Email Dispatch Card */}
           <div className="card">
             <div className="card-header">
-              <h2 className="card-title">Deliver Report via Email</h2>
+              <div>
+                <h2 className="card-title">
+                  <Mail size={18} color="#818CF8" /> Deliver Report via Email
+                </h2>
+                <div className="card-subtitle">
+                  Send a complete HTML copy of this report directly to a colleague, advisor, or department chair.
+                </div>
+              </div>
             </div>
-            <p style={{ color: '#64748b', fontSize: '13px', marginBottom: '16px' }}>
-              Send a copy of this complete engagement breakdown directly to an instructor or academic advisor.
-            </p>
-            <form onSubmit={handleSendEmail} style={{ display: 'flex', gap: '12px', maxWidth: '500px' }}>
+
+            <form onSubmit={handleSendEmail} style={{ display: 'flex', gap: '12px', maxWidth: '520px', flexWrap: 'wrap' }}>
               <input
                 type="email"
                 placeholder="colleague@university.edu"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                }}
+                style={{ flex: 1, minWidth: '240px' }}
               />
               <button
                 type="submit"
                 disabled={emailLoading || !emailInput}
                 className="btn btn-primary"
               >
-                {emailLoading ? 'Sending...' : 'Send Report'}
+                <Mail size={15} /> {emailLoading ? 'Sending...' : 'Send Report'}
               </button>
             </form>
+
             {emailStatus && (
               <div
                 style={{
-                  marginTop: '12px',
+                  marginTop: '14px',
                   fontSize: '13px',
-                  color: emailStatus.success ? '#15803d' : '#b91c1c',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: emailStatus.success ? '#34D399' : '#FDA4AF',
                 }}
               >
+                {emailStatus.success ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                 {emailStatus.message}
               </div>
             )}
