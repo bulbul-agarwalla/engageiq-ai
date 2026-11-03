@@ -24,20 +24,31 @@ def login_for_access_token(request: GoogleAuthRequest, db: Session = Depends(get
     credential = request.credential
 
     if credential.startswith("mock_"):
-        email = credential
-        name = "Mock User"
+        clean_email = credential[5:]
+        raw_email = credential
     else:
         # In a real app, verify the Google JWT token here using google-auth library
-        # email = verify_google_token(credential)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only mock credentials supported in dev mode",
         )
 
-    user = db.query(User).filter(User.email == email).first()
+    # Check if a user with either the clean email or the mock_ prefix already exists
+    user = db.query(User).filter(User.email.in_([clean_email, raw_email])).first()
+
     if not user:
-        # Auto-provision user on first login
-        user = User(email=email, name=name, role="student")
+        # Auto-provision user with role inference
+        role = (
+            "teacher"
+            if (
+                "teacher" in raw_email.lower()
+                or "prof" in raw_email.lower()
+                or "smith" in raw_email.lower()
+            )
+            else "student"
+        )
+        name = "Professor Demo" if role == "teacher" else "Student Demo"
+        user = User(email=raw_email, name=name, role=role)
         db.add(user)
         db.commit()
         db.refresh(user)
